@@ -19,11 +19,11 @@ editor_options:
 | **Student ID Numbers and Names of Group Members** | *\<list one student name, class group (just the letter; A, B, or C), and ID per line, e.g., 123456 - A - John Leposo; you should be between 2 and 5 members per group\>* |
 |                                                   |                                                                                                                                                                          |
 |                                                   | 1.  ID - Class Group - Name                                                                                                                                              |
-|                                                   |                                                                                                                                                                          |
+|                                                   | 136657- C - Shirleen Murugi                                                                                                                                                                      |
 |                                                   | 2.  ID - Class Group - Name                                                                                                                                              |
-|                                                   |                                                                                                                                                                          |
+|                                                   |  136665 - B - Adnan Mwendwa                                                                                                                                                                        |
 |                                                   | 3.  ID - Class Group - Name                                                                                                                                              |
-|                                                   |                                                                                                                                                                          |
+|                                                   | 135791 - C - Rehema Jemutai                                                                                                                                                                        |
 |                                                   | 4.  ID - Class Group - Name                                                                                                                                              |
 |                                                   |                                                                                                                                                                          |
 |                                                   | 5.  ID - Class Group - Name                                                                                                                                              |
@@ -247,29 +247,63 @@ Next, we display the quartiles for each numeric variable[*... think of this proc
 ```{r Your Fifth Code Chunk}
 summary(student_performance_dataset)
 ```
+# Stemming
 
-# \<You can Provide Another Appropriate Title Here if you wish\>
-
-Describe the code chunk here.
+Removing of suffixes from word which is teaching to get teach
 
 ```{r Your Sixth Code Chunk}
-# Fill this with R related code that will be executed when the R markdown file
+library(tm)
+library(SnowballC)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(textstem, dplyr)
+data("evaluation_likes_and_wishes")
+text_data <- c("teacher", "good at teaching", "the teaching is very detailed")
+
+corpus <- Corpus(VectorSource(text_data))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, removeWords, stopwords("en"))
+
+corpus <- tm_map(corpus, PlainTextDocument)
+
+corpus_stemmed <- tm_map(corpus, content_transformer(wordStem))
+for (i in 1:length(corpus_stemmed)) {
+  print(paste("Original:", text_data[i]))
+  print(paste("Stemmed:", unlist(strsplit(as.character(corpus_stemmed[[i]]$content), " "))))
+  cat("\n")
+}
 ```
 
-## \<You Can Have a Sub-Title Here if you wish\>
 
-Describe the code chunk here.
+
+
+## Tokenization
+
+Breaking of text into smaller meaningful chunk
 
 ```{r Your Seventh Code Chunk}
-# Fill this with other R related code that will be executed when the R markdown
+library(tokenizers)
+
+text <- "The lecturer tries as much as possible to ensure we understand."
+word_tokens <- unlist(tokenize_words(text))
+print(word_tokens)
+
+sentence_tokens <- unlist(tokenize_sentences(text))
+print(sentence_tokens)
+
 ```
-
-## \<You Can Have Another Sub-Title Here if you wish\>
-
-Describe the code chunk here.
+## Stopword removal
+This removes the punctuations and changes the values to lower case
 
 ```{r Your Eighth Code Chunk}
-# Fill this with other R related code that will be executed when the R markdown
+install.packages("tm")
+library(tm)
+
+text <- "The lecturer tries as much as possible to ensure we understand."
+corpus <- Corpus(VectorSource(text))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removePunctuation)
 ```
 
 **etc.** as per the lab submission requirements. Be neat and communicate in a clear and logical manner.
